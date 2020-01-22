@@ -87,11 +87,14 @@
 
                             <Border Grid.Column="{Binding StartColumn}" Grid.Row="1" Grid.ColumnSpan="2"
                                     BorderBrush="Gray" BorderThickness="1"
-                                    CornerRadius="5" Background="WhiteSmoke"
+                                    CornerRadius="5"
                                     Margin="5,0,0,0" Padding="5">
                                 <Border.Effect>
-                                <DropShadowEffect BlurRadius="1" Opacity="0.3" ShadowDepth="2"/>
+                                    <DropShadowEffect BlurRadius="1" Opacity="0.3" ShadowDepth="2"/>
                                 </Border.Effect>
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding Color}" />
+                                </Border.Background>
                                 <TextBlock Text="{Binding ChatItem.Text}" TextWrapping="Wrap" FontSize="14" />
                             </Border>
 

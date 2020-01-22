@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using WhatAppExportViewer.Interfaces;
 using WhatAppExportViewer.Model;
 
@@ -14,36 +15,39 @@ namespace WhatAppExportViewer.Services
         {
             var lines = File.ReadAllLines(file);
 
-            return lines.Select(l =>
+            var items = new List<ChatItem>();
+
+            var regex = new Regex(@"([0-9]*\.[0-9]*\.[0-9]*), ([0-9]*:[0-9]*) - (.*): (.*)");
+
+            ChatItem item = null;
+            foreach (var l in lines)
+            {
+                if (regex.IsMatch(l))
                 {
-                    try
+                    if (item != null)
                     {
-                        var dateStopIdx = l.IndexOf(',');
-                        var dateStr = l.Substring(0, dateStopIdx);
-                        var date = DateTime.Parse(dateStr, CultureInfo.CurrentCulture);
-
-                        var timeStopInx = l.IndexOf('-');
-                        var timeStr = l.Substring(dateStopIdx + 2, timeStopInx - dateStopIdx - 2);
-                        var time = TimeSpan.Parse(timeStr, CultureInfo.CurrentCulture);
-
-                        var textStartIdxtStartIdx = l.IndexOf(':', timeStopInx);
-
-                        var timeStamp = date.Add(time);
-
-                        string name = l.Substring(timeStopInx + 1, textStartIdxtStartIdx - timeStopInx - 1).Trim();
-
-                        string text = l.Substring(textStartIdxtStartIdx + 1).Trim();
-                        return new ChatItem(name, text, timeStamp);
-                    }
-                    catch
-                    {
-                        // Ignore
+                        items.Add(item);
                     }
 
-                    return null;
-                })
-                .Where(x => x != null)
-                .ToArray();
+                    var match = regex.Match(l);
+
+                    string name = match.Groups[3].Value;
+                    string text = match.Groups[4].Value;
+                    DateTime timestamp = DateTime.Parse(match.Groups[1].Value).Add(TimeSpan.Parse(match.Groups[2].Value));
+                    item = new ChatItem(name, text, timestamp);
+                }
+                else
+                {
+                    item?.AppendText(l);
+                }
+            }
+
+            if (item != null)
+            {
+                items.Add(item);
+            }
+
+            return items.ToArray();
         }
     }
 }

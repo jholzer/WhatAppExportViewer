@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Reactive.Linq;
+using System.Windows.Media;
 using ReactiveUI;
 using WhatAppExportViewer.Extensions;
 using WhatAppExportViewer.Model;
@@ -10,7 +10,7 @@ namespace WhatAppExportViewer.ViewModels
     public class ChatItemViewModel : ViewModelBase
     {
         private string amPerson;
-        private Brush background;
+        private Color color;
         private int startColumn;
 
         public ChatItemViewModel(ChatItem chatItem)
@@ -42,13 +42,13 @@ namespace WhatAppExportViewer.ViewModels
             }
         }
 
-        public Brush Background
+        public Color Color
         {
-            get => background;
+            get => color;
             private set
             {
-                if (Equals(value, background)) return;
-                background = value;
+                if (value.Equals(color)) return;
+                color = value;
                 raisePropertyChanged();
             }
         }
@@ -62,10 +62,10 @@ namespace WhatAppExportViewer.ViewModels
 
             this.WhenAnyValue(vm => vm.IAmPerson)
                 .Where(p => !string.IsNullOrEmpty(p))
-                .Subscribe(p =>
-                    Background = ChatItem.Name == p
-                        ? Brushes.WhiteSmoke
-                        : Brushes.GreenYellow)
+                .Select(p => ChatItem.Name == p
+                    ? Colors.WhiteSmoke
+                    : Colors.GreenYellow)
+                .Subscribe(c => Color = c)
                 .AddDisposable(Disposables);
         }
     }

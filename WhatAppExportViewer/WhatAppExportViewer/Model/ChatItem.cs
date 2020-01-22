@@ -16,5 +16,10 @@ namespace WhatAppExportViewer.Model
         public string Name { get; }
         public string Text { get; set; }
         public DateTime TimeStamp { get; set; }
+
+        public void AppendText(string text)
+        {
+            Text = $"{Text}\n{text}";
+        }
     }
 }
