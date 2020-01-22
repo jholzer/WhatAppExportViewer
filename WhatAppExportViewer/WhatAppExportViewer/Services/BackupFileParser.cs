@@ -32,7 +32,15 @@ namespace WhatAppExportViewer.Services
                     var match = regex.Match(l);
 
                     string name = match.Groups[3].Value;
-                    string text = match.Groups[4].Value;
+
+                    var preText = string.Empty;
+                    if (name.Contains(':'))
+                    {
+                        var idx = name.IndexOf(':');
+                        preText = name.Substring(idx + 1) + ":";
+                        name = name.Substring(0, idx);
+                    }
+                    string text = $"{preText} {match.Groups[4].Value}";
                     DateTime timestamp = DateTime.Parse(match.Groups[1].Value).Add(TimeSpan.Parse(match.Groups[2].Value));
                     item = new ChatItem(name, text, timestamp);
                 }
