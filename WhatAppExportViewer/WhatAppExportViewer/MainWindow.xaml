@@ -95,7 +95,17 @@
                                 <Border.Background>
                                     <SolidColorBrush Color="{Binding Color}" />
                                 </Border.Background>
-                                <TextBlock Text="{Binding ChatItem.Text}" TextWrapping="Wrap" FontSize="14" />
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" />
+                                    <Image Grid.Row="1" Source="{Binding Image}" />
+
+                                </Grid>
                             </Border>
 
                         </Grid>

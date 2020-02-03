@@ -11,11 +11,16 @@ namespace WhatAppExportViewer.ViewModels
     public class ChatViewModel : ViewModelBase
     {
         private readonly IKernel kernel;
+        private readonly string baseFolder;
         private readonly IBackupFileParser parser;
         private string amPerson;
 
-        public ChatViewModel(string backupFile, IBackupFileParser parser, IKernel kernel)
+        public ChatViewModel(string backupFile, 
+            string baseFolder,
+            IBackupFileParser parser, 
+            IKernel kernel)
         {
+            this.baseFolder = baseFolder;
             this.parser = parser;
             this.kernel = kernel;
             BackupFile = backupFile;
@@ -46,7 +51,9 @@ namespace WhatAppExportViewer.ViewModels
             IAmPerson = Persons.FirstOrDefault();
 
             ChatItemViewModels = chatItems
-                .Select(c => kernel.Get<ChatItemViewModel>(new ConstructorArgument(@"chatItem", c))).ToArray();
+                .Select(c => kernel.Get<ChatItemViewModel>(
+                    new ConstructorArgument(@"chatItem", c),
+                    new ConstructorArgument(@"baseFolder", baseFolder))).ToArray();
             ChatItemViewModels.AddDisposables(Disposables);
 
             this.WhenAnyValue(vm => vm.IAmPerson)

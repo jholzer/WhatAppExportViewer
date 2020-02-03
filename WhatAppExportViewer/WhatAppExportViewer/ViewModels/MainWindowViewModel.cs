@@ -98,7 +98,9 @@ namespace WhatAppExportViewer.ViewModels
         private void SetBackupFile(string file)
         {
             ChatViewModel?.Dispose();
-            ChatViewModel = kernel.Get<ChatViewModel>(new ConstructorArgument(@"backupFile", file));
+            ChatViewModel = kernel.Get<ChatViewModel>(
+                new ConstructorArgument(@"backupFile", file),
+                new ConstructorArgument(@"baseFolder", SelectedBackupFolder));
         }
 
         public override void Dispose()
