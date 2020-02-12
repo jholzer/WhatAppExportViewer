@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhatAppExportViewer", "WhatAppExportViewer\WhatAppExportViewer.csproj", "{1CBD6207-54A6-46AB-928C-885AF8BE0284}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhatsBack.Android", "WhatsBack\WhatsBack.Android\WhatsBack.Android.csproj", "{2CDE4638-4833-4777-BB14-D37680FA46E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhatsBack", "WhatsBack\WhatsBack\WhatsBack.csproj", "{43AA7E89-8676-4907-9367-9DA4769A3EFE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CBD6207-54A6-46AB-928C-885AF8BE0284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBD6207-54A6-46AB-928C-885AF8BE0284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBD6207-54A6-46AB-928C-885AF8BE0284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBD6207-54A6-46AB-928C-885AF8BE0284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CDE4638-4833-4777-BB14-D37680FA46E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CDE4638-4833-4777-BB14-D37680FA46E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CDE4638-4833-4777-BB14-D37680FA46E0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2CDE4638-4833-4777-BB14-D37680FA46E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CDE4638-4833-4777-BB14-D37680FA46E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CDE4638-4833-4777-BB14-D37680FA46E0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{43AA7E89-8676-4907-9367-9DA4769A3EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43AA7E89-8676-4907-9367-9DA4769A3EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43AA7E89-8676-4907-9367-9DA4769A3EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43AA7E89-8676-4907-9367-9DA4769A3EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F746614D-624D-4C7A-8ACA-D2E9A700292B}
+	EndGlobalSection
+EndGlobal

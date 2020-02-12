@@ -3,12 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{069B0EBB-FBEC-4EDE-9ABD-CC51E8521884}</ProjectGuid>
+    <ProjectGuid>{2CDE4638-4833-4777-BB14-D37680FA46E0}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TemplateGuid>{c9e5eea5-ca05-42a1-839b-61506e0a37df}</TemplateGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>WhatsAppMobileExportViewer.Droid</RootNamespace>
-    <AssemblyName>WhatsAppMobileExportViewer.Android</AssemblyName>
+    <RootNamespace>WhatsBack.Droid</RootNamespace>
+    <AssemblyName>WhatsBack.Android</AssemblyName>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
@@ -91,9 +91,9 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WhatsAppMobileExportViewer\WhatsAppMobileExportViewer.csproj">
-      <Project>{DF00F4A1-7833-4447-9252-A664033C1A39}</Project>
-      <Name>WhatsAppMobileExportViewer</Name>
+    <ProjectReference Include="..\WhatsBack\WhatsBack.csproj">
+      <Project>{A13537F9-2B9B-4D80-A38D-520542B55A07}</Project>
+      <Name>WhatsBack</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
