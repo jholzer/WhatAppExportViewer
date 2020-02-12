@@ -9,11 +9,7 @@
     xmlns:whatsBack="clr-namespace:WhatsBack;assembly=WhatsBack"
     ios:Page.UseSafeArea="true">
     <StackLayout>
-        <Entry x:Name="Username" Placeholder="Username"/>
-        <Entry x:Name="Password" Placeholder="Password"  />
-        <Entry x:Name="Address" Placeholder="Address"  />
-        <Entry x:Name="Phone" Placeholder="Phone Number" />
-        <Button x:Name="Register" Text="Register" TextColor="White" BackgroundColor="Gray" />
-        <Label x:Name="Result" />
+        <Button x:Name="LoadFile" Text="Load file" TextColor="White" BackgroundColor="Gray" />
+        <Button x:Name="ScanFolder" Text="Scan folder" TextColor="White" BackgroundColor="Gray" />
     </StackLayout>
 </rxui:ReactiveContentPage>  
