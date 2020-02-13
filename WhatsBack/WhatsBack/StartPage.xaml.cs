@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Text;
@@ -8,19 +7,16 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.XamForms;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace WhatsBack
 {
-    // Learn more about making custom code visible in the Xamarin.Forms previewer
-    // by visiting https://aka.ms/xamarinforms-previewer
-    [DesignTimeVisible(false)]
-    public partial class MainPage : ReactiveContentPage<MainPageViewModel>
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class StartPage : ReactiveContentPage<StartPageViewModel>, IViewFor<StartPageViewModel>
     {
-        public MainPage()
+        public StartPage()
         {
             InitializeComponent();
-
-            ViewModel = new MainPageViewModel();
 
             // Setup the bindings.  
             // Note: We have to use WhenActivated here, since we need to dispose the  
@@ -30,13 +26,13 @@ namespace WhatsBack
                 //this.Bind(ViewModel, x => x.UserName, x => x.Username.Text)
                 //    .DisposeWith(disposable);
 
-                this.BindCommand(ViewModel, 
-                        x => x.CmdLoadFile, 
+                this.BindCommand(ViewModel,
+                        x => x.CmdLoadFile,
                         x => x.LoadFile)
                     .DisposeWith(disposable);
 
-                this.BindCommand(ViewModel, 
-                        x => x.CmdScanFolder, 
+                this.BindCommand(ViewModel,
+                        x => x.CmdScanFolder,
                         x => x.ScanFolder)
                     .DisposeWith(disposable);
             });
