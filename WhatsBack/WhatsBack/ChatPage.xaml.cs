@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
 using ReactiveUI;
@@ -16,6 +17,12 @@ namespace WhatsBack
         public ChatPage()
         {
             InitializeComponent();
+
+            this.WhenActivated(disposable =>
+            {
+                this.OneWayBind(ViewModel, x => x.ChatItemViewModels, x => x.ChatItems.ItemsSource)
+                    .DisposeWith(disposable);
+            });
         }
     }
 }

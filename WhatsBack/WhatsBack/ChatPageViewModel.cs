@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Disposables;
 using ReactiveUI;
 using Splat;
 using WhatsBack.Model;
@@ -8,15 +9,20 @@ namespace WhatsBack
 {
     public class ChatPageViewModel : ViewModelBase, IRoutableViewModel
     {
-        private readonly ChatItem[] chatItems;
-
-        public ChatPageViewModel(IScreen hostScreen, ChatItem[] chatItems)
+        public ChatPageViewModel(IScreen hostScreen, ChatItem[] chatItems, string baseFolder)
         {
             HostScreen = hostScreen;
-            this.chatItems = chatItems;
+
+            ChatItemViewModels = chatItems.Select(item => new ChatItemsViewModel(item, baseFolder)).ToArray();
+
+            foreach (var vm in ChatItemViewModels)
+            {
+                vm.DisposeWith(Disposables);
+            }
         }
 
         public string UrlPathSegment { get; } = "Chat";
         public IScreen HostScreen { get; }
+        public ChatItemsViewModel[] ChatItemViewModels { get; }
     }
 }

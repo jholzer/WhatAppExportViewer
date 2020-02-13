@@ -8,13 +8,46 @@
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:rxui="clr-namespace:ReactiveUI.XamForms;assembly=ReactiveUI.XamForms"  
                           xmlns:whatsBack="clr-namespace:WhatsBack;assembly=WhatsBack"
-                          mc:Ignorable="d"
->
-    
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+                          mc:Ignorable="d">
+
+    <ListView x:Name="ChatItems" HasUnevenRows="True">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+
+                        <StackLayout Grid.Column="{Binding StartColumn}" Grid.Row="0" Grid.ColumnSpan="2"
+                                    Orientation="Horizontal" Margin="5, 0">
+                            <Label Text="{Binding ChatItem.Name}" FontAttributes="Bold" />
+                            <Label Text="{Binding ChatItem.TimeStamp}" />
+                        </StackLayout>
+
+                        <Frame Grid.Column="{Binding StartColumn}" Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="10" HasShadow="True"
+                               Margin="5" Padding="5">
+                            <Label Text="{Binding Text}"/>
+                            <!--<StackLayout>
+                                <StackLayout.Resources>
+                                    <whatsBack:ImageFileToImageSourceConverter x:Key="ImageFileToImageSourceConverter" />
+                                </StackLayout.Resources>
+                                <Label Text="{Binding Text}"/>
+                                <Image Source="{Binding ImagePath, Converter={StaticResource ImageFileToImageSourceConverter}}" IsVisible="{Binding ShowImage}"/>
+                            </StackLayout>-->
+                        </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 
 </rxui:ReactiveContentPage>

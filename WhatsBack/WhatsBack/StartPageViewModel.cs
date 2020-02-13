@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Text;
@@ -30,7 +31,8 @@ namespace WhatsBack
                     var parser = new BackupContentParser();
                     var chatItems = parser.ParseBackup(contents);
 
-                    HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems)).Subscribe();
+                    var baseFolder = Path.GetDirectoryName(fileData.FilePath);
+                    HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, baseFolder)).Subscribe();
                 }
                 catch (Exception ex)
                 {
