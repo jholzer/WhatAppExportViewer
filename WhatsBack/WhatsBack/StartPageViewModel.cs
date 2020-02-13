@@ -9,6 +9,8 @@ using Plugin.FilePicker;
 using ReactiveUI;
 using WhatsBack.Logic;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
+using Xamarin.Forms.PlatformConfiguration;
 
 namespace WhatsBack
 {
@@ -31,7 +33,8 @@ namespace WhatsBack
                     var parser = new BackupContentParser();
                     var chatItems = parser.ParseBackup(contents);
 
-                    var baseFolder = Path.GetDirectoryName(fileData.FilePath);
+                    var uri = new Uri(fileData.FilePath);
+                    var baseFolder = Path.GetDirectoryName(uri.LocalPath);
                     HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, baseFolder)).Subscribe();
                 }
                 catch (Exception ex)

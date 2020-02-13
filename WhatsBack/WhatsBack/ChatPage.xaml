@@ -35,14 +35,14 @@
 
                         <Frame Grid.Column="{Binding StartColumn}" Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="10" HasShadow="True"
                                Margin="5" Padding="5">
-                            <Label Text="{Binding Text}"/>
-                            <!--<StackLayout>
+                            <!--<Label Text="{Binding Text}"/>-->
+                            <StackLayout>
                                 <StackLayout.Resources>
                                     <whatsBack:ImageFileToImageSourceConverter x:Key="ImageFileToImageSourceConverter" />
                                 </StackLayout.Resources>
                                 <Label Text="{Binding Text}"/>
                                 <Image Source="{Binding ImagePath, Converter={StaticResource ImageFileToImageSourceConverter}}" IsVisible="{Binding ShowImage}"/>
-                            </StackLayout>-->
+                            </StackLayout>
                         </Frame>
                     </Grid>
                 </ViewCell>
