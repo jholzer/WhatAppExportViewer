@@ -34,7 +34,8 @@ namespace WhatsBack
                     var chatItems = parser.ParseBackup(contents);
 
                     var uri = new Uri(fileData.FilePath);
-                    var baseFolder = Path.GetDirectoryName(uri.LocalPath);
+                    var baseFolder = Path.GetDirectoryName(System.Web.HttpUtility.UrlDecode(uri.LocalPath)).Replace(":", "/");
+
                     HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, baseFolder)).Subscribe();
                 }
                 catch (Exception ex)

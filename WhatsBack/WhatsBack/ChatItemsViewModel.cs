@@ -1,13 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Reactive.Disposables;
 using DynamicData.Tests;
 using WhatsBack.Model;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace WhatsBack
 {
     public class ChatItemsViewModel : ViewModelBase
     {
+        private FileStream fileStream;
+
         public ChatItemsViewModel(ChatItem item, string baseFolder)
         {
             ChatItem = item;
@@ -24,10 +28,23 @@ namespace WhatsBack
                 var imageFile = untilFile.Substring(fileStartIdx);
 
                 ImagePath = Path.Combine(baseFolder.Trim(), imageFile.Trim());
-                ShowImage = true;
+
+                try
+                {
+                    fileStream = new FileStream(ImagePath, FileMode.Open, FileAccess.Read);
+                    fileStream.DisposeWith(Disposables);
+
+                    ImageSource = ImageSource.FromStream(() => fileStream);
+                    ShowImage = true;
+                }
+                catch
+                {
+                    // Ignore
+                }
             }
         }
 
+        public ImageSource ImageSource { get; }
         public bool ShowImage { get; }
         public string ImagePath { get; }
         public string Text { get; }

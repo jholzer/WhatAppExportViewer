@@ -37,11 +37,8 @@
                                Margin="5" Padding="5">
                             <!--<Label Text="{Binding Text}"/>-->
                             <StackLayout>
-                                <StackLayout.Resources>
-                                    <whatsBack:ImageFileToImageSourceConverter x:Key="ImageFileToImageSourceConverter" />
-                                </StackLayout.Resources>
                                 <Label Text="{Binding Text}"/>
-                                <Image Source="{Binding ImagePath, Converter={StaticResource ImageFileToImageSourceConverter}}" IsVisible="{Binding ShowImage}"/>
+                                <Image Source="{Binding ImageSource}" IsVisible="{Binding ShowImage}"/>
                             </StackLayout>
                         </Frame>
                     </Grid>
