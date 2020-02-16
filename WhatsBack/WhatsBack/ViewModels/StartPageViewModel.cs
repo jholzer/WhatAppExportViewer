@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Plugin.FilePicker;
 using ReactiveUI;
+using WhatsBack.Extensions;
 using WhatsBack.Logic;
 using Xamarin.Forms;
 
@@ -26,7 +27,7 @@ namespace WhatsBack.ViewModels
                     .DisposeWith(Disposables);
 
                 return Task.FromResult(Unit.Default);
-            }).DisposeWith(Disposables);
+            }).SetupErrorHandling(Disposables);
 
             CmdSetSourceFolder = ReactiveCommand.CreateFromTask(_ =>
             {
@@ -37,7 +38,7 @@ namespace WhatsBack.ViewModels
                     .DisposeWith(Disposables);
 
                 return Task.FromResult(Unit.Default);
-            }).DisposeWith(Disposables);
+            }).SetupErrorHandling(Disposables);
 
             CmdLoadFile = ReactiveCommand.CreateFromTask(async _ =>
             {
@@ -66,7 +67,7 @@ namespace WhatsBack.ViewModels
                 {
                     await Application.Current.MainPage.DisplayAlert("Error getting file", ex.Message, "Dismiss");
                 }
-            }).DisposeWith(Disposables);
+            }).SetupErrorHandling(Disposables);
         }
 
         public ReactiveCommand<Unit, Unit> CmdSetSourceFolder { get; private set; }

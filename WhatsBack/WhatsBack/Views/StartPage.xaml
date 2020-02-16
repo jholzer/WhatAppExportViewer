@@ -12,13 +12,13 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" x:Name="LoadFile" Text="Load file" TextColor="White" BackgroundColor="Gray" Margin="5" />
-        <Button Grid.Row="1" x:Name="ScanFolder" Text="Scan folder" TextColor="White" BackgroundColor="Gray" Margin="5" />
+        <Button Grid.Row="2" x:Name="ScanFolder" Text="Scan folder" TextColor="White" BackgroundColor="Gray" Margin="5" />
         <Button Grid.Row="3" x:Name="SetBaseFolder" Text="Set base folder" TextColor="White" BackgroundColor="Gray" Margin="5" />
     </Grid>
 </xamForms:ReactiveContentPage>

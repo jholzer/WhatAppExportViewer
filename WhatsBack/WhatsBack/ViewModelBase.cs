@@ -5,6 +5,7 @@ using System.Reactive.Disposables;
 using System.Runtime.CompilerServices;
 using DynamicData.Annotations;
 using ReactiveUI;
+using Xamarin.Forms;
 
 namespace WhatsBack
 {
@@ -21,6 +22,13 @@ namespace WhatsBack
         protected virtual void raisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.RaisePropertyChanged(propertyName);
+        }
+
+        public ViewModelBase()
+        {
+            ThrownExceptions
+                .Subscribe(async ex => await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"))
+                .DisposeWith(Disposables);
         }
     }
 }

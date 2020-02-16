@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using ReactiveUI;
+using WhatsBack.Extensions;
 using WhatsBack.Interfaces;
 using WhatsBack.Model;
 using Xamarin.Essentials;
@@ -53,7 +54,7 @@ namespace WhatsBack.ViewModels
 
                     return Task.FromResult(Unit.Default);
                 })
-                .DisposeWith(Disposables);
+                .SetupErrorHandling(Disposables);
 
             SetDirectoryContent(sourceDirectory);
         }

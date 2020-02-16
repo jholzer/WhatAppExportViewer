@@ -51,7 +51,7 @@ namespace WhatsBack.ViewModels
             var split = Path.GetFileNameWithoutExtension(fileName)?.Split(' ');
             if (split?.Length > 4)
                 return $"{split[3]} {split[4]}";
-            return fileName;
+            return Path.GetFileNameWithoutExtension(fileName);
         }
 
         public string UrlPathSegment { get; } = "Chats";
