@@ -35,6 +35,11 @@ namespace WhatsBack
                         x => x.CmdScanFolder,
                         x => x.ScanFolder)
                     .DisposeWith(disposable);
+
+                this.BindCommand(ViewModel,
+                        x => x.CmdSetSourceFolder,
+                        x => x.SetBaseFolder)
+                    .DisposeWith(disposable);
             });
         }
     }

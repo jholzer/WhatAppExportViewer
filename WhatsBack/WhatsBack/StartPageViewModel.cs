@@ -9,8 +9,6 @@ using Plugin.FilePicker;
 using ReactiveUI;
 using WhatsBack.Logic;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
-using Xamarin.Forms.PlatformConfiguration;
 
 namespace WhatsBack
 {
@@ -20,7 +18,27 @@ namespace WhatsBack
         {
             HostScreen = hostScreen;
 
-            CmdScanFolder = ReactiveCommand.CreateFromTask(_ => Task.FromResult(Unit.Default)).DisposeWith(Disposables);
+            CmdScanFolder = ReactiveCommand.CreateFromTask( _ =>
+            {
+                var directoryTools = (Application.Current as App)?.DirectoryTools;
+                HostScreen.Router.Navigate.Execute(new ScannedChatsViewModel(hostScreen, directoryTools))
+                    .Subscribe()
+                    .DisposeWith(Disposables);
+
+                return Task.FromResult(Unit.Default);
+            }).DisposeWith(Disposables);
+
+            CmdSetSourceFolder = ReactiveCommand.CreateFromTask(_ =>
+            {
+                var directoryTools = (Application.Current as App)?.DirectoryTools;
+
+                HostScreen.Router.Navigate.Execute(new DirectoryViewModel(hostScreen, directoryTools))
+                    .Subscribe()
+                    .DisposeWith(Disposables);
+
+                return Task.FromResult(Unit.Default);
+            }).DisposeWith(Disposables);
+
             CmdLoadFile = ReactiveCommand.CreateFromTask(async _ =>
             {
                 try
@@ -34,9 +52,15 @@ namespace WhatsBack
                     var chatItems = parser.ParseBackup(contents);
 
                     var uri = new Uri(fileData.FilePath);
-                    var baseFolder = Path.GetDirectoryName(System.Web.HttpUtility.UrlDecode(uri.LocalPath)).Replace(":", "/");
 
-                    HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, baseFolder)).Subscribe();
+                    var resolver = (Application.Current as App)?.DirectoryTools;
+                    var localPath = resolver?.GetLocaPath(uri) ?? string.Empty;
+
+                    var baseFolder = Path.GetDirectoryName(localPath);
+
+                    HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, baseFolder))
+                        .Subscribe()
+                        .DisposeWith(Disposables);
                 }
                 catch (Exception ex)
                 {
@@ -45,6 +69,7 @@ namespace WhatsBack
             }).DisposeWith(Disposables);
         }
 
+        public ReactiveCommand<Unit, Unit> CmdSetSourceFolder { get; private set; }
         public ReactiveCommand<Unit, Unit> CmdScanFolder { get; }
         public ICommand CmdLoadFile { get; }
         public string UrlPathSegment { get; } = "Start";

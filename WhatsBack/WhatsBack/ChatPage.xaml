@@ -15,26 +15,26 @@
             <DataTemplate>
                 <ViewCell>
 
-                    <Grid>
+                    <Grid Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
+                        <!--<Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+                        </Grid.ColumnDefinitions>-->
 
 
-                        <StackLayout Grid.Column="{Binding StartColumn}" Grid.Row="0" Grid.ColumnSpan="2"
+                        <StackLayout Grid.Column="{Binding StartColumn}" Grid.Row="0"
                                     Orientation="Horizontal" Margin="5, 0">
                             <Label Text="{Binding ChatItem.Name}" FontAttributes="Bold" />
                             <Label Text="{Binding ChatItem.TimeStamp}" />
                         </StackLayout>
 
-                        <Frame Grid.Column="{Binding StartColumn}" Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="10" HasShadow="True"
-                               Margin="5" Padding="5">
+                        <Frame Grid.Row="1" CornerRadius="10" HasShadow="True"
+                               Margin="10,0,10,10" Padding="5">
                             <!--<Label Text="{Binding Text}"/>-->
                             <StackLayout>
                                 <Label Text="{Binding Text}"/>

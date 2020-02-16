@@ -19,6 +19,8 @@ namespace WhatsBack
                 .CreateMainPage();
         }
 
+        public IDirectoryTools DirectoryTools { get; set; }
+
         protected override void OnStart()
         {
         }

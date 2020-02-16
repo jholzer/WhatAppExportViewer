@@ -25,6 +25,8 @@ namespace WhatsBack
 
             dependencyResolver.Register(() => new StartPage(), typeof(IViewFor<StartPageViewModel>));
             dependencyResolver.Register(() => new ChatPage(), typeof(IViewFor<ChatPageViewModel>));
+            dependencyResolver.Register(() => new DirectoryView(), typeof(IViewFor<DirectoryViewModel>));
+            dependencyResolver.Register(() => new ScannedChatsPage(), typeof(IViewFor<ScannedChatsViewModel>));
         }
 
         public Page CreateMainPage()

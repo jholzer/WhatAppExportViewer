@@ -29,6 +29,8 @@ namespace WhatsBack
 
                 ImagePath = Path.Combine(baseFolder.Trim(), imageFile.Trim());
 
+                //ImagePath = @"/storage/1D11-380A/TestData/20190822_201330_Vivid.jpg";
+
                 try
                 {
                     fileStream = new FileStream(ImagePath, FileMode.Open, FileAccess.Read);
