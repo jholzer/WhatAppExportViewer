@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using ReactiveUI;
@@ -47,8 +48,8 @@ namespace WhatsBack.ViewModels
 
         private string ExtractChatPartner(string fileName)
         {
-            var split = fileName.Split(' ');
-            if (split.Length > 4)
+            var split = Path.GetFileNameWithoutExtension(fileName)?.Split(' ');
+            if (split?.Length > 4)
                 return $"{split[3]} {split[4]}";
             return fileName;
         }
