@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reactive.Disposables;
 using ReactiveUI;
 using ReactiveUI.XamForms;
-using Xamarin.Forms;
+using WhatsBack.ViewModels;
 using Xamarin.Forms.Xaml;
 
-namespace WhatsBack
+namespace WhatsBack.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DirectoryView : ReactiveContentPage<DirectoryViewModel>

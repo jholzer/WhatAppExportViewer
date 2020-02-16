@@ -8,10 +8,12 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using ReactiveUI;
+using WhatsBack.Interfaces;
 using WhatsBack.Model;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
-namespace WhatsBack
+namespace WhatsBack.ViewModels
 {
     public class DirectoryViewModel : ViewModelBase, IRoutableViewModel
     {
@@ -29,8 +31,9 @@ namespace WhatsBack
             HostScreen = hostScreen;
 
             var sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
-
             subDirectories.DisposeWith(Disposables);
+
+            SelectedDirectory = new DirectoryContent(Path.GetFileName(sourceDirectory), sourceDirectory);
 
             this.WhenAnyValue(vm => vm.SelectedDirectory)
                 .Where(x => x != null)
@@ -43,6 +46,11 @@ namespace WhatsBack
             CmdSetSoureDirectory = ReactiveCommand.CreateFromTask(_ =>
                 {
                     Preferences.Set("sourceDirectory", SelectedDirectory.FullPath);
+
+                    HostScreen.Router.Navigate.Execute(new ScannedChatsViewModel(hostScreen, directoryTools))
+                        .Subscribe()
+                        .DisposeWith(Disposables);
+
                     return Task.FromResult(Unit.Default);
                 })
                 .DisposeWith(Disposables);

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Disposables;
-using DynamicData.Tests;
 using WhatsBack.Model;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace WhatsBack
+namespace WhatsBack.ViewModels
 {
     public class ChatItemsViewModel : ViewModelBase
     {

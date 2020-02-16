@@ -1,6 +1,8 @@
 ﻿using ReactiveUI;
 using ReactiveUI.XamForms;
 using Splat;
+using WhatsBack.ViewModels;
+using WhatsBack.Views;
 using Xamarin.Forms;
 
 namespace WhatsBack

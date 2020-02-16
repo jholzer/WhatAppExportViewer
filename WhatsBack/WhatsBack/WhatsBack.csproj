@@ -18,16 +18,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="ChatPage.xaml">
+    <EmbeddedResource Update="Views\ChatPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="DirectoryView.xaml">
+    <EmbeddedResource Update="Views\DirectoryView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="ScannedChatsPage.xaml">
+    <EmbeddedResource Update="Views\ScannedChatsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="StartPage.xaml">
+    <EmbeddedResource Update="Views\StartPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

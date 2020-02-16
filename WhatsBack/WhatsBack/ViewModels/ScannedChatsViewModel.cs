@@ -1,14 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using ReactiveUI;
 using WhatsBack.Design;
-using WhatsBack.Logic;
+using WhatsBack.Interfaces;
 using WhatsBack.Model;
 using Xamarin.Essentials;
 
-namespace WhatsBack
+namespace WhatsBack.ViewModels
 {
     public class ScannedChatsViewModel : ViewModelBase, IRoutableViewModel
     {

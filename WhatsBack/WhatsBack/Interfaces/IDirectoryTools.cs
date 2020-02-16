@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using WhatsBack.Model;
 
-namespace WhatsBack
+namespace WhatsBack.Interfaces
 {
     public interface IDirectoryTools
     {

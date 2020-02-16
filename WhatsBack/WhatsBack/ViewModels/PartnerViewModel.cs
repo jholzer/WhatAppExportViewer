@@ -11,7 +11,7 @@ using WhatsBack.Logic;
 using WhatsBack.Model;
 using Xamarin.Essentials;
 
-namespace WhatsBack
+namespace WhatsBack.ViewModels
 {
     public class PartnerViewModel : ViewModelBase, IRoutableViewModel
     {

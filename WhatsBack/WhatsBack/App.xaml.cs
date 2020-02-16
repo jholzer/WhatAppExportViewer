@@ -1,5 +1,6 @@
 ﻿using System;
 using ReactiveUI;
+using WhatsBack.Interfaces;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

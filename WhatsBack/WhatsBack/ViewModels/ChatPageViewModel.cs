@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reactive.Disposables;
 using ReactiveUI;
-using Splat;
 using WhatsBack.Model;
 
-namespace WhatsBack
+namespace WhatsBack.ViewModels
 {
     public class ChatPageViewModel : ViewModelBase, IRoutableViewModel
     {

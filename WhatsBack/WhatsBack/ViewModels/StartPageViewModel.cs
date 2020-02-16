@@ -10,7 +10,7 @@ using ReactiveUI;
 using WhatsBack.Logic;
 using Xamarin.Forms;
 
-namespace WhatsBack
+namespace WhatsBack.ViewModels
 {
     public class StartPageViewModel : ViewModelBase, IRoutableViewModel
     {

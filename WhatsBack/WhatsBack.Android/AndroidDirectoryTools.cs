@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using WhatsBack.Interfaces;
 using WhatsBack.Model;
 using Environment = Android.OS.Environment;
 
