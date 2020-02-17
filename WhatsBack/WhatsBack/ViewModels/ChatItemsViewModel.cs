@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reactive.Disposables;
 using WhatsBack.Model;
 using Xamarin.Essentials;
@@ -9,9 +10,7 @@ namespace WhatsBack.ViewModels
 {
     public class ChatItemsViewModel : ViewModelBase
     {
-        private FileStream fileStream;
-
-        public ChatItemsViewModel(ChatItem item, string baseFolder)
+        public ChatItemsViewModel(ChatItem item, FileContent[] imageFiles)
         {
             ChatItem = item;
 
@@ -26,19 +25,25 @@ namespace WhatsBack.ViewModels
                 var fileStartIdx = untilFile.LastIndexOf(' ');
                 var imageFile = untilFile.Substring(fileStartIdx);
 
-                ImagePath = Path.Combine(baseFolder.Trim(), imageFile.Trim());
+                var res = imageFiles.FirstOrDefault(f =>
+                    f.Name.Trim().Equals(imageFile.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
-                //ImagePath = @"/storage/1D11-380A/TestData/20190822_201330_Vivid.jpg";
+                if (res == null)
+                {
+                    return;
+                }
 
+                ImagePath = res.FullPath;
+                
                 try
                 {
-                    fileStream = new FileStream(ImagePath, FileMode.Open, FileAccess.Read);
+                    var fileStream = new FileStream(ImagePath, FileMode.Open, FileAccess.Read);
                     fileStream.DisposeWith(Disposables);
 
                     ImageSource = ImageSource.FromStream(() => fileStream);
                     ShowImage = true;
                 }
-                catch
+                catch (Exception ex)
                 {
                     // Ignore
                 }

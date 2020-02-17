@@ -6,18 +6,20 @@ namespace WhatsBack.Model
 {
     public class ChatItem
     {
-        public ChatItem(string name, string text, DateTime timeStamp, string tag)
+        public ChatItem(string name, string text, DateTime timeStamp, string tag, string sourceFile)
         {
             Name = name;
             Text = text;
             TimeStamp = timeStamp;
             Tag = tag;
+            SourceFile = sourceFile;
         }
 
         public string Name { get; }
         public string Text { get; set; }
         public DateTime TimeStamp { get; }
         public string Tag { get; }
+        public string SourceFile { get; }
 
         public void AppendText(string text)
         {

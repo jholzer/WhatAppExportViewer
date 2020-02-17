@@ -11,14 +11,14 @@ using WhatsBack.Design;
 using WhatsBack.Extensions;
 using WhatsBack.Logic;
 using WhatsBack.Model;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace WhatsBack.ViewModels
 {
     public class PartnerViewModel : ViewModelBase, IRoutableViewModel
     {
-        public PartnerViewModel(IScreen hostScreen, string partner, IEnumerable<FileContent> files)
+        public PartnerViewModel(IScreen hostScreen, string partner, IEnumerable<FileContent> files,
+            FileContent[] imageFiles)
         {
             if (files == null)
                 return;
@@ -29,15 +29,13 @@ namespace WhatsBack.ViewModels
             var fileContents = files as FileContent[] ?? files.ToArray();
             NumberOfFiles = $"{fileContents.Count()} file(s)";
 
-            var sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
-
             var parser = new BackupContentParser();
 
             CmdShowChat = ReactiveCommand.CreateFromTask(_ =>
             {
                 var allChatItems = ExtractAllChatItems(fileContents, parser);
 
-                HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, allChatItems, sourceDirectory))
+                HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, allChatItems, imageFiles))
                     .Subscribe()
                     .DisposeWith(Disposables);
 
@@ -54,7 +52,6 @@ namespace WhatsBack.ViewModels
                     var response = await Application.Current.MainPage.DisplayAlert("Merge files?", "Really merge files", "Yes", "No");
                     if (!response)
                         return Task.FromResult(Unit.Default);
-
 
                     var baseDir = Path.GetDirectoryName(fileContents.First().FullPath);
                     foreach (var tuple in allChatItems.GroupBy(CreateDateStamp)
@@ -86,7 +83,7 @@ namespace WhatsBack.ViewModels
             var allChatItems = files.SelectMany(file =>
                 {
                     var content = File.ReadAllText(file.FullPath);
-                    var chatItems = parser.ParseBackup(content);
+                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
                     return chatItems;
                 })
                 .OrderBy(ci => ci.TimeStamp)
@@ -106,7 +103,7 @@ namespace WhatsBack.ViewModels
     public class DesignPartnerViewModel : PartnerViewModel
     {
         public DesignPartnerViewModel(IScreen hostScreen, string partner, IEnumerable<FileContent> files)
-            : base(new DesignHostScreen(), "Partner", DesignData.GetFileContent())
+            : base(new DesignHostScreen(), "Partner", DesignData.GetFileContent(), new FileContent[0])
         {
         }
     }

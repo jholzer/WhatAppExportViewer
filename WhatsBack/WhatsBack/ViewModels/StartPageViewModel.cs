@@ -9,6 +9,7 @@ using Plugin.FilePicker;
 using ReactiveUI;
 using WhatsBack.Extensions;
 using WhatsBack.Logic;
+using WhatsBack.Model;
 using Xamarin.Forms;
 
 namespace WhatsBack.ViewModels
@@ -59,7 +60,7 @@ namespace WhatsBack.ViewModels
 
                     var baseFolder = Path.GetDirectoryName(localPath);
 
-                    HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, baseFolder))
+                    HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, new FileContent[0]))
                         .Subscribe()
                         .DisposeWith(Disposables);
                 }

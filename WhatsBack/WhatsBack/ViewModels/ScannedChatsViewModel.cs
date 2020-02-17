@@ -18,12 +18,19 @@ namespace WhatsBack.ViewModels
 
             var sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
 
-            var foundFiles = directoryTools.GetDirectoryContent(new DirectoryContent(string.Empty, sourceDirectory))
+            var files = directoryTools.GetDirectoryContent(new DirectoryContent(string.Empty, sourceDirectory))
                 .OfType<FileContent>()
+                .ToArray();
+
+            var textFiles = files
                 .Where(content => content.Extension.Equals(".txt", StringComparison.CurrentCultureIgnoreCase))
                 .ToArray();
 
-            var chatPartners = foundFiles.GroupBy(x => ExtractChatPartner(x.Name))
+            var imageFiles = files
+                .Where(content => content.Extension.Equals(".jpg", StringComparison.CurrentCultureIgnoreCase))
+                .ToArray();
+
+            var chatPartners = textFiles.GroupBy(x => ExtractChatPartner(x.Name))
                 .Select(g => g.Key)
                 .Distinct()
                 .ToArray();
@@ -32,11 +39,11 @@ namespace WhatsBack.ViewModels
             {
                 return new
                 {
-                    Partner = partner, Files = foundFiles.Where(file => ExtractChatPartner(file.Name) == partner)
+                    Partner = partner, Files = textFiles.Where(file => ExtractChatPartner(file.Name) == partner)
                 };
             });
 
-            PartnerViewModels = filesForPartners.Select(tuple => new PartnerViewModel(HostScreen, tuple.Partner, tuple.Files))
+            PartnerViewModels = filesForPartners.Select(tuple => new PartnerViewModel(HostScreen, tuple.Partner, tuple.Files, imageFiles))
                 .ToArray();
             foreach (var partnerViewModel in PartnerViewModels)
             {

@@ -9,7 +9,7 @@ namespace WhatsBack.Logic
 {
     class BackupContentParser
     {
-        public ChatItem[] ParseBackup(string fileContent, string tag = null)
+        public ChatItem[] ParseBackup(string fileContent, string tag = null, string sourceFile = null)
         {
             var items = new List<ChatItem>();
 
@@ -46,7 +46,7 @@ namespace WhatsBack.Logic
                     
                     var timestamp = date.Add(time);
 
-                    item = new ChatItem(name, text, timestamp, tag);
+                    item = new ChatItem(name, text, timestamp, tag, sourceFile);
                 }
                 else
                 {

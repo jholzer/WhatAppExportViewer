@@ -7,11 +7,11 @@ namespace WhatsBack.ViewModels
 {
     public class ChatPageViewModel : ViewModelBase, IRoutableViewModel
     {
-        public ChatPageViewModel(IScreen hostScreen, ChatItem[] chatItems, string baseFolder)
+        public ChatPageViewModel(IScreen hostScreen, ChatItem[] chatItems, FileContent[] imageFiles)
         {
             HostScreen = hostScreen;
 
-            ChatItemViewModels = chatItems.Select(item => new ChatItemsViewModel(item, baseFolder)).ToArray();
+            ChatItemViewModels = chatItems.Select(item => new ChatItemsViewModel(item, imageFiles)).ToArray();
 
             foreach (var vm in ChatItemViewModels)
             {
