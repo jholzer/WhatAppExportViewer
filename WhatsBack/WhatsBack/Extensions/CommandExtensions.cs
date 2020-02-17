@@ -14,6 +14,7 @@ namespace WhatsBack.Extensions
             command.ThrownExceptions
                 .Subscribe(async ex => await Application.Current.MainPage.DisplayAlert("Error running command", ex.Message, "OK"))
                 .DisposeWith(disposable);
+            command.DisposeWith(disposable);
             return command;
         }
     }
