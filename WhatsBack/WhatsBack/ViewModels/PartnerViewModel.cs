@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -17,34 +18,32 @@ namespace WhatsBack.ViewModels
 {
     public class PartnerViewModel : ViewModelBase, IRoutableViewModel
     {
-        public PartnerViewModel(IScreen hostScreen, string partner, IEnumerable<FileContent> files,
+        public PartnerViewModel(IScreen hostScreen, string partner, ChatItem[] chatItems,
             FileContent[] imageFiles)
         {
-            if (files == null)
+            if (chatItems == null)
                 return;
 
             HostScreen = hostScreen;
             Partner = partner;
 
-            var fileContents = files as FileContent[] ?? files.ToArray();
-            NumberOfFiles = $"{fileContents.Count()} file(s)";
+            var fileCount = GetFileCount(chatItems);
+            NumberOfFiles = $"{fileCount} file(s)";
 
-            var parser = new BackupContentParser();
-            var allChatItems = ExtractAllChatItems(fileContents, parser);
-
-            var timeStamps = allChatItems
-                .Select(i => new DateTime(i.TimeStamp.Year, i.TimeStamp.Month, i.TimeStamp.Day)).Distinct()
+            var timeStamps = chatItems
+                .Select(i => i.TimeStamp)
+                .Distinct()
                 .ToArray();
 
             var rangeStart = timeStamps.Min();
             var rangeEnd = timeStamps.Max();
             DateRange = rangeStart != rangeEnd
-                ? $"{rangeStart:dd.MM.yyyy} - {rangeEnd:dd.MM.yyyy}"
-                : $"{rangeStart:dd.MM.yyyy}";
+                ? $"{rangeStart:dd.MM.yy HH.mm} - {rangeEnd:dd.MM.yy HH.mm}"
+                : $"{rangeStart:dd.MM.yy HH.mm}";
 
             CmdShowChat = ReactiveCommand.CreateFromTask(_ =>
             {
-                HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, allChatItems, imageFiles))
+                HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, imageFiles))
                     .Subscribe()
                     .DisposeWith(Disposables);
 
@@ -53,15 +52,15 @@ namespace WhatsBack.ViewModels
 
             CmdMergeFiles = ReactiveCommand.CreateFromTask(async _ =>
                 {
-                    if (!fileContents.Any())
+                    if (!chatItems.Any())
                         return Task.FromResult(Unit.Default);
 
                     var response = await Application.Current.MainPage.DisplayAlert("Merge files?", "Really merge files", "Yes", "No");
                     if (!response)
                         return Task.FromResult(Unit.Default);
 
-                    var baseDir = Path.GetDirectoryName(fileContents.First().FullPath);
-                    foreach (var tuple in allChatItems.GroupBy(CreateDateStamp)
+                    var baseDir = Path.GetDirectoryName(chatItems.First().SourceFile);
+                    foreach (var tuple in chatItems.GroupBy(CreateDateStamp)
                         .Select(group => new {Datestamp = group.Key, Items = group.ToArray()}))
                     {
                         var filename = $"WhatsApp Chat Merged {Partner} {tuple.Datestamp:yyyyMMdd}.txt";
@@ -75,28 +74,51 @@ namespace WhatsBack.ViewModels
                         File.WriteAllLines(targetFilePath, lines);
                     }
 
+                    BackupFiles(chatItems, baseDir);
+                    if (await Application.Current.MainPage.DisplayAlert("Delete merged files?", "Really delete files? Backup was taken...", "Yes",
+                        "No"))
+                    {
+                        foreach (var file in GetFiles(chatItems))
+                        {
+                            File.Delete(file);
+                        }
+                    }
+
                     return Task.FromResult(Unit.Default);
-                }, Observable.Return(fileContents.Length > 1))
+                }, Observable.Return(fileCount > 1))
                 .SetupErrorHandling(Disposables);
+        }
+
+        private static void BackupFiles(ChatItem[] chatItems, string baseDir)
+        {
+            var filesToBackup = GetFiles(chatItems);
+            var archiveFile = Path.Combine(baseDir, "MergeBackup.zip");
+
+            var zipArchiveMode = File.Exists(archiveFile) ? ZipArchiveMode.Update : ZipArchiveMode.Create;
+            using (ZipArchive zip = ZipFile.Open(archiveFile, zipArchiveMode))
+            {
+                var backupTime = DateTime.Now;
+                foreach (var file in filesToBackup)
+                {
+                    var targetFile = $"{backupTime:yyyyMMddhhmm}_{Path.GetFileNameWithoutExtension(file)}";
+                    zip.CreateEntryFromFile(file, targetFile, CompressionLevel.Optimal);
+                }
+            }
+        }
+
+        private int GetFileCount(ChatItem[] chatItems)
+        {
+            return GetFiles(chatItems).Count();
+        }
+
+        private static IEnumerable<string> GetFiles(ChatItem[] chatItems)
+        {
+            return chatItems.Select(c => c.SourceFile).Distinct();
         }
 
         private static DateTime CreateDateStamp(ChatItem ci)
         {
             return new DateTime(ci.TimeStamp.Year, ci.TimeStamp.Month, ci.TimeStamp.Day);
-        }
-
-        private static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files, BackupContentParser parser)
-        {
-            var allChatItems = files.SelectMany(file =>
-                {
-                    var content = File.ReadAllText(file.FullPath);
-                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
-                    return chatItems;
-                })
-                .OrderBy(ci => ci.TimeStamp)
-                .Distinct(ChatItem.Comparer)
-                .ToArray();
-            return allChatItems;
         }
 
         public ReactiveCommand<Unit, Task<Unit>> CmdMergeFiles { get; }
@@ -111,7 +133,7 @@ namespace WhatsBack.ViewModels
     public class DesignPartnerViewModel : PartnerViewModel
     {
         public DesignPartnerViewModel(IScreen hostScreen, string partner, IEnumerable<FileContent> files)
-            : base(new DesignHostScreen(), "Partner", DesignData.GetFileContent(), new FileContent[0])
+            : base(new DesignHostScreen(), "Partner", new ChatItem[0], new FileContent[0])
         {
         }
     }
