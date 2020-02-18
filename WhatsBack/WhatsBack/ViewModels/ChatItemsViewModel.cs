@@ -45,6 +45,7 @@ namespace WhatsBack.ViewModels
                 }
                 catch (Exception ex)
                 {
+                    Text = $"{Text}\n({ex.Message})";
                     // Ignore
                 }
             }
