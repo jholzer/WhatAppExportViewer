@@ -30,11 +30,20 @@ namespace WhatsBack.ViewModels
             NumberOfFiles = $"{fileContents.Count()} file(s)";
 
             var parser = new BackupContentParser();
+            var allChatItems = ExtractAllChatItems(fileContents, parser);
+
+            var timeStamps = allChatItems
+                .Select(i => new DateTime(i.TimeStamp.Year, i.TimeStamp.Month, i.TimeStamp.Day)).Distinct()
+                .ToArray();
+
+            var rangeStart = timeStamps.Min();
+            var rangeEnd = timeStamps.Max();
+            DateRange = rangeStart != rangeEnd
+                ? $"{rangeStart:dd.MM.yyyy} - {rangeEnd:dd.MM.yyyy}"
+                : $"{rangeStart:dd.MM.yyyy}";
 
             CmdShowChat = ReactiveCommand.CreateFromTask(_ =>
             {
-                var allChatItems = ExtractAllChatItems(fileContents, parser);
-
                 HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, allChatItems, imageFiles))
                     .Subscribe()
                     .DisposeWith(Disposables);
@@ -46,8 +55,6 @@ namespace WhatsBack.ViewModels
                 {
                     if (!fileContents.Any())
                         return Task.FromResult(Unit.Default);
-
-                    var allChatItems = ExtractAllChatItems(fileContents, parser);
 
                     var response = await Application.Current.MainPage.DisplayAlert("Merge files?", "Really merge files", "Yes", "No");
                     if (!response)
@@ -63,7 +70,7 @@ namespace WhatsBack.ViewModels
                                 var nameTag = !string.IsNullOrEmpty(item.Name) ? $"{item.Name}:" : string.Empty;
                                 return $"{item.TimeStamp:dd.MM.yy, HH:mm} - {nameTag} {item.Text}";
                             });
-
+                        
                         var targetFilePath = Path.Combine(baseDir, filename); 
                         File.WriteAllLines(targetFilePath, lines);
                     }
@@ -94,6 +101,7 @@ namespace WhatsBack.ViewModels
 
         public ReactiveCommand<Unit, Task<Unit>> CmdMergeFiles { get; }
         public string NumberOfFiles { get; }
+        public string DateRange { get; }
         public ReactiveCommand<Unit, Unit> CmdShowChat { get; private set; }
         public string Partner { get; }
         public string UrlPathSegment { get; } = "Partner";
