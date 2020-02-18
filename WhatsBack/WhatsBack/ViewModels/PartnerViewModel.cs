@@ -64,7 +64,7 @@ namespace WhatsBack.ViewModels
                                 return $"{item.TimeStamp:dd.MM.yy, HH:mm} - {nameTag} {item.Text}";
                             });
 
-                        var targetFilePath = Path.Combine(baseDir, filename);
+                        var targetFilePath = Path.Combine(baseDir, "filename.txt");
                         File.WriteAllLines(targetFilePath, lines);
                     }
 
