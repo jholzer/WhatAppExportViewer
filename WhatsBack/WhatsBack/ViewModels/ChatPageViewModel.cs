@@ -7,9 +7,12 @@ namespace WhatsBack.ViewModels
 {
     public class ChatPageViewModel : ViewModelBase, IRoutableViewModel
     {
-        public ChatPageViewModel(IScreen hostScreen, ChatItem[] chatItems, FileContent[] imageFiles)
+        public ChatPageViewModel(IScreen hostScreen, ChatItem[] chatItems, FileContent[] imageFiles, string chatLabel = null)
         {
             HostScreen = hostScreen;
+
+            if (!string.IsNullOrEmpty(chatLabel))
+                UrlPathSegment = chatLabel;
 
             ChatItemViewModels = chatItems.Select(item => new ChatItemsViewModel(item, imageFiles)).ToArray();
 

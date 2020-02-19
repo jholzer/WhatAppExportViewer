@@ -68,7 +68,7 @@ namespace WhatsBack.ViewModels
 
         private Task ShowChat(IScreen hostScreen, ChatItem[] chatItems, FileContent[] imageFiles)
         {
-            HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, imageFiles))
+            HostScreen.Router.Navigate.Execute(new ChatPageViewModel(hostScreen, chatItems, imageFiles, Partner))
                 .Subscribe()
                 .DisposeWith(Disposables);
 
