@@ -86,6 +86,7 @@ namespace WhatsBack.ViewModels
             if (!response)
                 return;
 
+            var involvedFiles = GetFiles(chatItems);
             var baseDir = Path.GetDirectoryName(chatItems.First().SourceFile);
             foreach (var tuple in chatItems.GroupBy(CreateDateStamp)
                 .Select(group => new {Datestamp = group.Key, Items = group.ToArray()}))
@@ -94,7 +95,7 @@ namespace WhatsBack.ViewModels
                     continue;
 
                 var firstItemTimeStamp = tuple.Items.First().TimeStamp;
-                var filename = $"WhatsApp Chat Merged {Partner} {firstItemTimeStamp:yyyyMMdd_hhmm}.txt";
+                var filename = GenerateFilename(firstItemTimeStamp);
                 var lines = tuple.Items.Select(item =>
                 {
                     var nameTag = !string.IsNullOrEmpty(item.Name) ? $"{item.Name}:" : string.Empty;
@@ -104,22 +105,38 @@ namespace WhatsBack.ViewModels
                 if (baseDir != null)
                 {
                     var targetFilePath = Path.Combine(baseDir, filename);
+                    var instanceNr = 1;
+                    while (involvedFiles.Contains(targetFilePath))
+                    {
+                        targetFilePath = Path.Combine(baseDir, GenerateFilename(firstItemTimeStamp, instanceNr));
+                        instanceNr++;
+                    }
                     File.WriteAllLines(targetFilePath, lines);
+                }
+                else
+                {
+                    return;
                 }
             }
 
-            BackupFiles(chatItems, baseDir);
-            if (await Application.Current.MainPage.DisplayAlert("Delete merged files?",
+            BackupFiles(involvedFiles, baseDir);
+            if (await Application.Current.MainPage.DisplayAlert($"Delete {involvedFiles.Length} merged files?",
                 "Really delete files? Backup was taken...", "Yes",
                 "No"))
             {
-                foreach (var file in GetFiles(chatItems))
+                foreach (var file in involvedFiles)
                 {
                     File.Delete(file);
                 }
             }
 
             parentViewModel.Refresh();
+        }
+
+        private string GenerateFilename(DateTime firstItemTimeStamp, int? instanceNr = null)
+        {
+            var postFix = instanceNr.HasValue ? $" ({instanceNr.Value})" : string.Empty;
+            return $"WhatsApp Chat Merged {Partner} {firstItemTimeStamp:yyyyMMdd_HHmm}{postFix}.txt";
         }
 
         private async Task RenameSingleFile(ChatItem[] chatItems)
@@ -144,9 +161,8 @@ namespace WhatsBack.ViewModels
             parentViewModel.Refresh();
         }
 
-        private static void BackupFiles(ChatItem[] chatItems, string baseDir)
+        private static void BackupFiles(string[] filesToBackup, string baseDir)
         {
-            var filesToBackup = GetFiles(chatItems);
             var archiveFile = Path.Combine(baseDir, "MergeBackup.zip");
 
             var zipArchiveMode = File.Exists(archiveFile) ? ZipArchiveMode.Update : ZipArchiveMode.Create;
@@ -166,9 +182,9 @@ namespace WhatsBack.ViewModels
             return GetFiles(chatItems).Count();
         }
 
-        private static IEnumerable<string> GetFiles(ChatItem[] chatItems)
+        private static string[] GetFiles(ChatItem[] chatItems)
         {
-            return chatItems.Select(c => c.SourceFile).Distinct();
+            return chatItems.Select(c => c.SourceFile).Distinct().ToArray();
         }
 
         private static DateTime CreateDateStamp(ChatItem ci)

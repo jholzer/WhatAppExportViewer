@@ -36,7 +36,9 @@ namespace WhatsBack.Model
                 if (ReferenceEquals(x, null)) return false;
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
-                return x.Name == y.Name && x.Text == y.Text && x.TimeStamp.Equals(y.TimeStamp);
+                return x.Name.Trim() == y.Name.Trim() 
+                       && x.Text.Trim() == y.Text.Trim() 
+                       && x.TimeStamp.Equals(y.TimeStamp);
             }
 
             public int GetHashCode(ChatItem obj)

@@ -46,7 +46,7 @@ namespace WhatsBack.Logic
                     
                     var timestamp = date.Add(time);
 
-                    item = new ChatItem(name, text, timestamp, tag, sourceFile);
+                    item = new ChatItem(name.Trim(), text.Trim(), timestamp, tag, sourceFile);
                 }
                 else
                 {
