@@ -38,15 +38,15 @@ namespace WhatsBack.ViewModels
                 .ToArray();
 
             var chatItemSets = chatPartners.SelectMany(partner =>
-                {
-                    var filesForPartner = textFiles.Where(file => ExtractChatPartner(file.Name) == partner);
-                    return CreateChatItemsSets(partner, filesForPartner);
-                })
+            {
+                var filesForPartner = textFiles.Where(file => ExtractChatPartner(file.Name) == partner);
+                return CreateChatItemsSets(partner, filesForPartner);
+            })
                 .OrderByDescending(ci => ci.Date)
                 .ThenBy(ci => ci.Partner)
                 .ToArray();
 
-            PartnerViewModels = chatItemSets.Select(cis => new PartnerViewModel(HostScreen, cis.Partner, cis.ChatItems.ToArray(), imageFiles))
+            PartnerViewModels = chatItemSets.Select(cis => new PartnerViewModel(HostScreen, cis.Partner, cis.ChatItems, imageFiles))
                 .ToArray();
             foreach (var partnerViewModel in PartnerViewModels)
             {
@@ -56,67 +56,27 @@ namespace WhatsBack.ViewModels
 
         private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner, IEnumerable<FileContent> filesForPartner)
         {
-            var allChatItems  = ExtractAllChatItems(filesForPartner);
+            var allChatItems = ExtractAllChatItems(filesForPartner);
 
-            var conversationEndThreshold = new TimeSpan(5, 0, 0);
-            var blocks = new List<ChatItemSet>();
-            ChatItemSet currentBlock = null;
-            for (var i = 0; i < allChatItems.Count(); i++)
-            {
-                if (currentBlock == null)
+            return allChatItems
+                .GroupBy(item => new DateTime(item.TimeStamp.Year, item.TimeStamp.Month, item.TimeStamp.Day))
+                .Select(group => new ChatItemSet
                 {
-                    currentBlock = new ChatItemSet
-                    {
-                        Partner = partner,
-                        Date = allChatItems[i].TimeStamp
-                    };
-                    blocks.Add(currentBlock);
-                }
-
-                if (i < allChatItems.Count() - 1 && i > 0)
-                {
-                    var gap = allChatItems[i + 1].TimeStamp - allChatItems[i].TimeStamp;
-                    if (gap < conversationEndThreshold)
-                    {
-                        currentBlock.Add(allChatItems[i + 1]);
-                    }
-                    else
-                    {
-                        currentBlock = new ChatItemSet
-                        {
-                            Partner = partner,
-                            Date = allChatItems[i + 1].TimeStamp
-                        };
-                        blocks.Add(currentBlock);
-                    }
-                }
-                else
-                {
-                    currentBlock.Add(allChatItems[i]);
-                }
-            }
-
-            return blocks;
-
-            //return allChatItems
-            //    .GroupBy(item => new DateTime(item.TimeStamp.Year, item.TimeStamp.Month, item.TimeStamp.Day))
-            //    .Select(group => new ChatItemSet
-            //    {
-            //        Partner = partner,
-            //        ChatItems = @group.ToArray(),
-            //        Date = @group.Key
-            //    });
+                    Partner = partner,
+                    ChatItems = @group.ToArray(),
+                    Date = @group.Key
+                });
         }
 
         private static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files)
         {
             var parser = new BackupContentParser();
             var allChatItems = files.SelectMany(file =>
-                {
-                    var content = File.ReadAllText(file.FullPath);
-                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
-                    return chatItems;
-                })
+            {
+                var content = File.ReadAllText(file.FullPath);
+                var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
+                return chatItems;
+            })
                 .OrderBy(ci => ci.TimeStamp)
                 .Distinct(ChatItem.Comparer)
                 .ToArray();
@@ -139,20 +99,14 @@ namespace WhatsBack.ViewModels
 
     public class ChatItemSet
     {
-        readonly List<ChatItem> chatItems = new List<ChatItem>();
         public string Partner { get; set; }
-        public IEnumerable<ChatItem> ChatItems => chatItems.OrderBy(x => x.TimeStamp);
+        public ChatItem[] ChatItems { get; set; }
         public DateTime Date { get; set; }
-
-        public void Add(ChatItem chatItem)
-        {
-            chatItems.Add(chatItem);
-        }
     }
 
     public class DesignScannedChatsViewModel : ScannedChatsViewModel
     {
-        public DesignScannedChatsViewModel(IScreen hostScreen, IDirectoryTools directoryTools) 
+        public DesignScannedChatsViewModel(IScreen hostScreen, IDirectoryTools directoryTools)
             : base(new DesignHostScreen(), null)
         {
         }

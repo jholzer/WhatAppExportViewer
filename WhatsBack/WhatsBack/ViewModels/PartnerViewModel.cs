@@ -63,7 +63,11 @@ namespace WhatsBack.ViewModels
                     foreach (var tuple in chatItems.GroupBy(CreateDateStamp)
                         .Select(group => new {Datestamp = group.Key, Items = group.ToArray()}))
                     {
-                        var filename = $"WhatsApp Chat Merged {Partner} {tuple.Datestamp:yyyyMMdd}.txt";
+                        if (!tuple.Items.Any())
+                            continue;
+
+                        var firstItemTimeStamp = tuple.Items.First().TimeStamp;
+                        var filename = $"WhatsApp Chat Merged {Partner} {firstItemTimeStamp:yyyyMMdd_hhmm}.txt";
                         var lines = tuple.Items.Select(item =>
                             {
                                 var nameTag = !string.IsNullOrEmpty(item.Name) ? $"{item.Name}:" : string.Empty;
@@ -100,7 +104,7 @@ namespace WhatsBack.ViewModels
                 var backupTime = DateTime.Now;
                 foreach (var file in filesToBackup)
                 {
-                    var targetFile = $"{backupTime:yyyyMMddhhmm}_{Path.GetFileNameWithoutExtension(file)}";
+                    var targetFile = $"{backupTime:yyyyMMddhhmm}_{Path.GetFileName(file)}";
                     zip.CreateEntryFromFile(file, targetFile, CompressionLevel.Optimal);
                 }
             }
