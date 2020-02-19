@@ -14,11 +14,39 @@ namespace WhatsBack.ViewModels
 {
     public class ScannedChatsViewModel : ViewModelBase, IRoutableViewModel
     {
+        private readonly IDirectoryTools directoryTools;
+        private readonly string sourceDirectory;
+        private PartnerViewModel[] partnerViewModels;
+
         public ScannedChatsViewModel(IScreen hostScreen, IDirectoryTools directoryTools)
         {
             HostScreen = hostScreen;
+            this.directoryTools = directoryTools;
+            sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
 
-            var sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
+            FillContent();
+        }
+
+        public PartnerViewModel[] PartnerViewModels
+        {
+            get => partnerViewModels;
+            private set
+            {
+                partnerViewModels = value;
+                raisePropertyChanged();
+            }
+        }
+
+        public string UrlPathSegment { get; } = "Chats";
+        public IScreen HostScreen { get; }
+
+        public void Refresh()
+        {
+            FillContent();
+        }
+        private void FillContent()
+        {
+            DisposeViewModels();
 
             var files = directoryTools.GetDirectoryContent(new DirectoryContent(string.Empty, sourceDirectory))
                 .OfType<FileContent>()
@@ -38,23 +66,38 @@ namespace WhatsBack.ViewModels
                 .ToArray();
 
             var chatItemSets = chatPartners.SelectMany(partner =>
-            {
-                var filesForPartner = textFiles.Where(file => ExtractChatPartner(file.Name) == partner);
-                return CreateChatItemsSets(partner, filesForPartner);
-            })
+                {
+                    var filesForPartner = textFiles.Where(file => ExtractChatPartner(file.Name) == partner);
+                    return CreateChatItemsSets(partner, filesForPartner);
+                })
                 .OrderByDescending(ci => ci.Date)
                 .ThenBy(ci => ci.Partner)
                 .ToArray();
 
-            PartnerViewModels = chatItemSets.Select(cis => new PartnerViewModel(HostScreen, cis.Partner, cis.ChatItems, imageFiles))
+            PartnerViewModels = chatItemSets
+                .Select(cis => new PartnerViewModel(HostScreen, cis.Partner, cis.ChatItems, imageFiles, this))
                 .ToArray();
+        }
+
+        public override void Dispose()
+        {
+            DisposeViewModels();
+            base.Dispose();
+        }
+
+        private void DisposeViewModels()
+        {
+            if (PartnerViewModels == null)
+                return;
+
             foreach (var partnerViewModel in PartnerViewModels)
             {
                 partnerViewModel.DisposeWith(Disposables);
             }
         }
 
-        private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner, IEnumerable<FileContent> filesForPartner)
+        private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner,
+            IEnumerable<FileContent> filesForPartner)
         {
             var allChatItems = ExtractAllChatItems(filesForPartner);
 
@@ -72,18 +115,16 @@ namespace WhatsBack.ViewModels
         {
             var parser = new BackupContentParser();
             var allChatItems = files.SelectMany(file =>
-            {
-                var content = File.ReadAllText(file.FullPath);
-                var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
-                return chatItems;
-            })
+                {
+                    var content = File.ReadAllText(file.FullPath);
+                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
+                    return chatItems;
+                })
                 .OrderBy(ci => ci.TimeStamp)
                 .Distinct(ChatItem.Comparer)
                 .ToArray();
             return allChatItems;
         }
-
-        public PartnerViewModel[] PartnerViewModels { get; private set; }
 
         private string ExtractChatPartner(string fileName)
         {
@@ -92,9 +133,6 @@ namespace WhatsBack.ViewModels
                 return $"{split[3]} {split[4]}";
             return Path.GetFileNameWithoutExtension(fileName);
         }
-
-        public string UrlPathSegment { get; } = "Chats";
-        public IScreen HostScreen { get; }
     }
 
     public class ChatItemSet
