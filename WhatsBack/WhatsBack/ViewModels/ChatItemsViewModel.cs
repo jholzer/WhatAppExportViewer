@@ -23,6 +23,8 @@ namespace WhatsBack.ViewModels
                 var jpgIdx = Text.IndexOf(".jpg", StringComparison.InvariantCultureIgnoreCase);
                 var untilFile = Text.Substring(0, jpgIdx + 4);
                 var fileStartIdx = untilFile.LastIndexOf(' ');
+                if (fileStartIdx < 0)
+                    fileStartIdx = 0;
                 var imageFile = untilFile.Substring(fileStartIdx);
 
                 var res = imageFiles.FirstOrDefault(f =>

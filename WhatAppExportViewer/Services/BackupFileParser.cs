@@ -42,7 +42,7 @@ namespace WhatAppExportViewer.Services
                     }
                     string text = $"{preText} {match.Groups[4].Value}";
                     DateTime timestamp = DateTime.Parse(match.Groups[1].Value).Add(TimeSpan.Parse(match.Groups[2].Value));
-                    item = new ChatItem(name, text, timestamp);
+                    item = new ChatItem(name.Trim(), text.Trim(), timestamp);
                 }
                 else
                 {

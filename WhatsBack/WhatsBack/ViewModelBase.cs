@@ -13,7 +13,7 @@ namespace WhatsBack
     {
         protected CompositeDisposable Disposables = new CompositeDisposable();
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Disposables?.Dispose();
         }

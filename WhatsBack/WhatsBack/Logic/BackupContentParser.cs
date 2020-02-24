@@ -41,12 +41,12 @@ namespace WhatsBack.Logic
                     var timestampText = match.Groups[2].Value;
                     var dateTimeText = match.Groups[1].Value;
                     
-                    var date = DateTime.ParseExact(dateTimeText, @"dd\.mm\.yy", CultureInfo.InvariantCulture);
+                    var date = DateTime.ParseExact(dateTimeText, @"dd\.MM\.yy", CultureInfo.InvariantCulture);
                     var time = TimeSpan.ParseExact(timestampText, @"hh\:mm", CultureInfo.InvariantCulture);
                     
                     var timestamp = date.Add(time);
 
-                    item = new ChatItem(name, text, timestamp, tag, sourceFile);
+                    item = new ChatItem(name.Trim(), text.Trim(), timestamp, tag, sourceFile);
                 }
                 else
                 {

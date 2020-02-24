@@ -29,8 +29,24 @@
                         <Label Grid.Column="0" Grid.Row="0" Text="{Binding Partner}" FontSize="Medium" FontAttributes="Bold" />
                         <Label Grid.Column="0" Grid.Row="1" Text="{Binding DateRange}" FontSize="Default" />
                         <Label Grid.Column="0" Grid.Row="2" Text="{Binding NumberOfFiles}" FontSize="Default" />
-                        <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Text="Merge" Command="{Binding CmdMergeFiles}" />
-                        <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Text="Show" Command="{Binding CmdShowChat}" />
+                        
+                        <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" 
+                                Margin="2,5" CornerRadius="5" 
+                                Text="Merge" 
+                                Command="{Binding CmdMergeFiles}" 
+                                IsVisible="{Binding MoreThanOneFile}" />
+                        
+                        <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" 
+                                Margin="2,5" CornerRadius="5" 
+                                Text="Rename" 
+                                Command="{Binding CmdRenameFile}" 
+                                IsVisible="{Binding JustOneFile}" />
+                        
+                        <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" 
+                                Margin="2,5" 
+                                CornerRadius="5" 
+                                Text="Show" 
+                                Command="{Binding CmdShowChat}" />
 
                     </Grid>
                 </ViewCell>

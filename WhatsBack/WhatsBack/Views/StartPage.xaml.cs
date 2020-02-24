@@ -21,10 +21,10 @@ namespace WhatsBack.Views
                 //this.Bind(ViewModel, x => x.UserName, x => x.Username.Text)
                 //    .DisposeWith(disposable);
 
-                this.BindCommand(ViewModel,
-                        x => x.CmdLoadFile,
-                        x => x.LoadFile)
-                    .DisposeWith(disposable);
+                //this.BindCommand(ViewModel,
+                //        x => x.CmdLoadFile,
+                //        x => x.LoadFile)
+                //    .DisposeWith(disposable);
 
                 this.BindCommand(ViewModel,
                         x => x.CmdScanFolder,

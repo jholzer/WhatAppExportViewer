@@ -14,11 +14,39 @@ namespace WhatsBack.ViewModels
 {
     public class ScannedChatsViewModel : ViewModelBase, IRoutableViewModel
     {
+        private readonly IDirectoryTools directoryTools;
+        private readonly string sourceDirectory;
+        private PartnerViewModel[] partnerViewModels;
+
         public ScannedChatsViewModel(IScreen hostScreen, IDirectoryTools directoryTools)
         {
             HostScreen = hostScreen;
+            this.directoryTools = directoryTools;
+            sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
 
-            var sourceDirectory = Preferences.Get("sourceDirectory", string.Empty);
+            FillContent();
+        }
+
+        public PartnerViewModel[] PartnerViewModels
+        {
+            get => partnerViewModels;
+            private set
+            {
+                partnerViewModels = value;
+                raisePropertyChanged();
+            }
+        }
+
+        public string UrlPathSegment { get; } = "Chats";
+        public IScreen HostScreen { get; }
+
+        public void Refresh()
+        {
+            FillContent();
+        }
+        private void FillContent()
+        {
+            DisposeViewModels();
 
             var files = directoryTools.GetDirectoryContent(new DirectoryContent(string.Empty, sourceDirectory))
                 .OfType<FileContent>()
@@ -46,71 +74,57 @@ namespace WhatsBack.ViewModels
                 .ThenBy(ci => ci.Partner)
                 .ToArray();
 
-            PartnerViewModels = chatItemSets.Select(cis => new PartnerViewModel(HostScreen, cis.Partner, cis.ChatItems.ToArray(), imageFiles))
+            PartnerViewModels = chatItemSets
+                .Select(cis => new PartnerViewModel(HostScreen, cis.Partner, cis.ChatItems, imageFiles, this))
                 .ToArray();
+        }
+
+        public override void Dispose()
+        {
+            DisposeViewModels();
+            base.Dispose();
+        }
+
+        private void DisposeViewModels()
+        {
+            if (PartnerViewModels == null)
+                return;
+
             foreach (var partnerViewModel in PartnerViewModels)
             {
                 partnerViewModel.DisposeWith(Disposables);
             }
         }
 
-        private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner, IEnumerable<FileContent> filesForPartner)
+        private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner,
+            IEnumerable<FileContent> filesForPartner)
         {
-            var allChatItems  = ChatItemsService.ExtractAllChatItems(filesForPartner);
+            var allChatItems = ExtractAllChatItems(filesForPartner);
 
-            var conversationEndThreshold = new TimeSpan(5, 0, 0);
-            var blocks = new List<ChatItemSet>();
-            ChatItemSet currentBlock = null;
-            for (var i = 0; i < allChatItems.Count(); i++)
-            {
-                if (currentBlock == null)
+            return allChatItems
+                .GroupBy(item => new DateTime(item.TimeStamp.Year, item.TimeStamp.Month, item.TimeStamp.Day))
+                .Select(group => new ChatItemSet
                 {
-                    currentBlock = new ChatItemSet
-                    {
-                        Partner = partner,
-                        Date = allChatItems[i].TimeStamp
-                    };
-                    blocks.Add(currentBlock);
-                }
-
-                if (i < allChatItems.Count() - 1 && i > 0)
-                {
-                    var gap = allChatItems[i + 1].TimeStamp - allChatItems[i].TimeStamp;
-                    if (gap < conversationEndThreshold)
-                    {
-                        currentBlock.Add(allChatItems[i + 1]);
-                    }
-                    else
-                    {
-                        currentBlock = new ChatItemSet
-                        {
-                            Partner = partner,
-                            Date = allChatItems[i + 1].TimeStamp
-                        };
-                        blocks.Add(currentBlock);
-                    }
-                }
-                else
-                {
-                    currentBlock.Add(allChatItems[i]);
-                }
-            }
-
-            return blocks;
-
-            //return allChatItems
-            //    .GroupBy(item => new DateTime(item.TimeStamp.Year, item.TimeStamp.Month, item.TimeStamp.Day))
-            //    .Select(group => new ChatItemSet
-            //    {
-            //        Partner = partner,
-            //        ChatItems = @group.ToArray(),
-            //        Date = @group.Key
-            //    });
+                    Partner = partner,
+                    ChatItems = @group.ToArray(),
+                    Date = @group.Key
+                });
         }
 
-        
-
-        public PartnerViewModel[] PartnerViewModels { get; private set; }
+        private static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files)
+        {
+            var parser = new BackupContentParser();
+            var allChatItems = files.SelectMany(file =>
+                {
+                    var content = File.ReadAllText(file.FullPath);
+                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
+                    return chatItems;
+                })
+                .OrderBy(ci => ci.TimeStamp)
+                .Distinct(ChatItem.Comparer)
+                .ToArray();
+            return allChatItems;
+        }
 
         private string ExtractChatPartner(string fileName)
         {
@@ -119,27 +133,18 @@ namespace WhatsBack.ViewModels
                 return $"{split[3]} {split[4]}";
             return Path.GetFileNameWithoutExtension(fileName);
         }
-
-        public string UrlPathSegment { get; } = "Chats";
-        public IScreen HostScreen { get; }
     }
 
     public class ChatItemSet
     {
-        readonly List<ChatItem> chatItems = new List<ChatItem>();
         public string Partner { get; set; }
-        public IEnumerable<ChatItem> ChatItems => chatItems.OrderBy(x => x.TimeStamp);
+        public ChatItem[] ChatItems { get; set; }
         public DateTime Date { get; set; }
-
-        public void Add(ChatItem chatItem)
-        {
-            chatItems.Add(chatItem);
-        }
     }
 
     public class DesignScannedChatsViewModel : ScannedChatsViewModel
     {
-        public DesignScannedChatsViewModel(IScreen hostScreen, IDirectoryTools directoryTools) 
+        public DesignScannedChatsViewModel(IScreen hostScreen, IDirectoryTools directoryTools)
             : base(new DesignHostScreen(), null)
         {
         }
