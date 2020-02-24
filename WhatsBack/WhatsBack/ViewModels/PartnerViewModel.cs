@@ -80,7 +80,16 @@ namespace WhatsBack.ViewModels
                     {
                         foreach (var file in GetFiles(chatItems))
                         {
-                            ChatItemsService.ExtractAllChatItems(fileContent);
+                            var itemsForFile = ChatItemsService.ExtractAllChatItems(file);
+
+                            var containedDays = itemsForFile.Select(i => new DateTime(i.TimeStamp.Year, i.TimeStamp.Month, i.TimeStamp.Day))
+                                .Distinct();
+                            if (containedDays.Count() > 1)
+                            {
+                                if (!await Application.Current.MainPage.DisplayAlert("File contains more than one day...", "Really delete files? Data of other days might be lost", "Yes",
+                                                                                     "No"))
+                                    return Task.FromResult(Unit.Default); ;
+                            }
                             File.Delete(file);
                         }
                     }

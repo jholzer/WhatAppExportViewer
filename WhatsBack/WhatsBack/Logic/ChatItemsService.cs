@@ -12,16 +12,22 @@ namespace WhatsBack.Logic
         public static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files)
         {
             var parser = new BackupContentParser();
-            var allChatItems = files.SelectMany(file =>
-                {
-                    var content = File.ReadAllText(file.FullPath);
-                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
-                    return chatItems;
-                })
+            var allChatItems = files.SelectMany(file => ExtractAllChatItems(file.FullPath))
                 .OrderBy(ci => ci.TimeStamp)
                 .Distinct(ChatItem.Comparer)
                 .ToArray();
             return allChatItems;
+        }
+
+        public static ChatItem[] ExtractAllChatItems(string filePath)
+        {
+            var parser = new BackupContentParser();
+            var content = File.ReadAllText(filePath);
+                    
+            return parser.ParseBackup(content, sourceFile: filePath)
+                .OrderBy(ci => ci.TimeStamp)
+                .Distinct(ChatItem.Comparer)
+                .ToArray();
         }
     }
 }
