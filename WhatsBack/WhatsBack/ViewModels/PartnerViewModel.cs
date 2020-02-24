@@ -18,6 +18,7 @@ namespace WhatsBack.ViewModels
     public class PartnerViewModel : ViewModelBase, IRoutableViewModel
     {
         private readonly ScannedChatsViewModel parentViewModel;
+        private readonly string[] involvedFiles;
 
         public PartnerViewModel(IScreen hostScreen, string partner, ChatItem[] chatItems,
             FileContent[] imageFiles, ScannedChatsViewModel parentViewModel)
@@ -29,6 +30,7 @@ namespace WhatsBack.ViewModels
             HostScreen = hostScreen;
             Partner = partner;
 
+            involvedFiles = GetFiles(chatItems);
             var fileCount = GetFileCount(chatItems);
             MoreThanOneFile = fileCount > 1;
             JustOneFile = fileCount == 1;
@@ -56,6 +58,7 @@ namespace WhatsBack.ViewModels
                 .SetupErrorHandling(Disposables);
         }
 
+        public string InvolvedFilenames => string.Join(", ", involvedFiles.Select(Path.GetFileName));
         public ReactiveCommand<Unit, Unit> CmdRenameFile { get; }
         public ReactiveCommand<Unit, Unit> CmdMergeFiles { get; }
         public string NumberOfFiles { get; }
@@ -87,7 +90,6 @@ namespace WhatsBack.ViewModels
             if (!response)
                 return;
 
-            var involvedFiles = GetFiles(chatItems);
             var baseDir = Path.GetDirectoryName(chatItems.First().SourceFile);
             foreach (var tuple in chatItems.GroupBy(CreateDateStamp)
                 .Select(group => new {Datestamp = group.Key, Items = group.ToArray()}))
