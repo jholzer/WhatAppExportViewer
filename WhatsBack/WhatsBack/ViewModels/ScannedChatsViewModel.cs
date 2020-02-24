@@ -99,7 +99,7 @@ namespace WhatsBack.ViewModels
         private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner,
             IEnumerable<FileContent> filesForPartner)
         {
-            var allChatItems = ExtractAllChatItems(filesForPartner);
+            var allChatItems = ChatItemsService.ExtractAllChatItems(filesForPartner);
 
             return allChatItems
                 .GroupBy(item => new DateTime(item.TimeStamp.Year, item.TimeStamp.Month, item.TimeStamp.Day))
@@ -109,21 +109,6 @@ namespace WhatsBack.ViewModels
                     ChatItems = @group.ToArray(),
                     Date = @group.Key
                 });
-        }
-
-        private static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files)
-        {
-            var parser = new BackupContentParser();
-            var allChatItems = files.SelectMany(file =>
-                {
-                    var content = File.ReadAllText(file.FullPath);
-                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
-                    return chatItems;
-                })
-                .OrderBy(ci => ci.TimeStamp)
-                .Distinct(ChatItem.Comparer)
-                .ToArray();
-            return allChatItems;
         }
 
         private string ExtractChatPartner(string fileName)

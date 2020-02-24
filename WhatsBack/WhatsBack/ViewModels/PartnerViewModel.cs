@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using ReactiveUI;
 using WhatsBack.Extensions;
+using WhatsBack.Logic;
 using WhatsBack.Model;
 using Xamarin.Forms;
 
@@ -126,6 +127,19 @@ namespace WhatsBack.ViewModels
             {
                 foreach (var file in involvedFiles)
                 {
+                    var itemsForFile = ChatItemsService.ExtractAllChatItems(file);
+
+                    var containedDays = itemsForFile.Select(i => new DateTime(i.TimeStamp.Year, i.TimeStamp.Month, i.TimeStamp.Day))
+                        .Distinct();
+                    if (containedDays.Count() > 1)
+                    {
+                        if (!await Application.Current.MainPage.DisplayAlert("File contains more than one day...", 
+                                                                             "Really delete files? Data of other days might be lost", 
+                                                                             "Yes",
+                                                                             "No"))
+                            return;
+                    }
+
                     File.Delete(file);
                 }
             }

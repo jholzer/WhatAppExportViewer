@@ -11,7 +11,6 @@ namespace WhatsBack.Logic
     {
         public static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files)
         {
-            var parser = new BackupContentParser();
             var allChatItems = files.SelectMany(file => ExtractAllChatItems(file.FullPath))
                 .OrderBy(ci => ci.TimeStamp)
                 .Distinct(ChatItem.Comparer)
