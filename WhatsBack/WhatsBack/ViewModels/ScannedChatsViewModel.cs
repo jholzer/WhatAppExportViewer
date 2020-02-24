@@ -56,7 +56,7 @@ namespace WhatsBack.ViewModels
 
         private static IEnumerable<ChatItemSet> CreateChatItemsSets(string partner, IEnumerable<FileContent> filesForPartner)
         {
-            var allChatItems  = ExtractAllChatItems(filesForPartner);
+            var allChatItems  = ChatItemsService.ExtractAllChatItems(filesForPartner);
 
             var conversationEndThreshold = new TimeSpan(5, 0, 0);
             var blocks = new List<ChatItemSet>();
@@ -108,20 +108,7 @@ namespace WhatsBack.ViewModels
             //    });
         }
 
-        private static ChatItem[] ExtractAllChatItems(IEnumerable<FileContent> files)
-        {
-            var parser = new BackupContentParser();
-            var allChatItems = files.SelectMany(file =>
-                {
-                    var content = File.ReadAllText(file.FullPath);
-                    var chatItems = parser.ParseBackup(content, sourceFile: file.FullPath);
-                    return chatItems;
-                })
-                .OrderBy(ci => ci.TimeStamp)
-                .Distinct(ChatItem.Comparer)
-                .ToArray();
-            return allChatItems;
-        }
+        
 
         public PartnerViewModel[] PartnerViewModels { get; private set; }
 

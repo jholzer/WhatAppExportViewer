@@ -80,6 +80,7 @@ namespace WhatsBack.ViewModels
                     {
                         foreach (var file in GetFiles(chatItems))
                         {
+                            ChatItemsService.ExtractAllChatItems(fileContent);
                             File.Delete(file);
                         }
                     }
